@@ -2,7 +2,6 @@ import os
 from dataclasses import dataclass
 from functools import cache
 
-import numpy as np
 import pandas as pd
 from flask import Flask
 from pymongo import MongoClient

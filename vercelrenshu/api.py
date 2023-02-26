@@ -1,4 +1,5 @@
-from typing import List, Literal, Union
+import time
+from typing import Literal, Union
 
 import numpy as np
 import pandas as pd
@@ -70,10 +71,12 @@ def home():
 
 @app.post("/estimate")
 def estimate(request: Union[RequestLR2, RequestMD5]):
+    start = time.time()
     if type(request) is RequestLR2:
         lamps_df = make_lamps_df_lr2(request)
     elif type(request) is RequestMD5:
         lamps_df = make_lamps_df_md5(request)
     t = estimate_core(lamps_df)
     hoshi = to_hoshi(t)
-    return str(hoshi)
+    t = time.time() - start
+    return f"★{hoshi:.02f}, {t:.03f} sec."

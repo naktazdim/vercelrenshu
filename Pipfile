@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "==2.2.2"
 pymongo = "*"
 pandas = "*"
 numpy = "*"
+flask = "*"
+fastapi = "*"
 
 [dev-packages]
 

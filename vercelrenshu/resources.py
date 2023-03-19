@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 from pandas.api.types import CategoricalDtype
 
-from vercelrenshu.pandas_util import records_to_df
+from vercelrenshu.util.df import records_to_df
 
 _RESOURCE_DIR = Path(__file__).parent.parent / "resources"
 

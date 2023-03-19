@@ -9,7 +9,7 @@ import numpy as np
 
 
 def expit(x: np.ndarray) -> np.ndarray:
-    """scipy.special.expit()"""
+    """scipy.special.expit(x)"""
     return 1.0 / (1.0 + np.exp(-x))
 
 
@@ -19,7 +19,7 @@ def minimize(
     tol: float = 1.0e-6,
     maxiter: int = 100,
 ) -> float:
-    """scipy.optimize.minimize_scalar()"""
+    """scipy.optimize.minimize_scalar(f).x"""
 
     # Golden-section search
     # https://en.wikipedia.org/wiki/Golden-section_search
@@ -43,12 +43,11 @@ def minimize(
 
 
 def interp(x: float, xp: np.ndarray, fp: np.ndarray) -> float:
-    """scipy.interpolate.interp1d()"""
+    """scipy.interpolate.interp1d(xp, fp, fill_value="extrapolate")(x)"""
 
-    # assume x are sorted
-    if x < xp[0]:
+    if x < xp[0]:  # extrapolate
         return (fp[1] - fp[0]) / (xp[1] - xp[0]) * (x - xp[0]) + fp[0]
-    elif xp[-1] < x:
+    elif xp[-1] < x:  # extrapolate
         return (fp[-1] - fp[-2]) / (xp[-1] - xp[-2]) * (x - xp[-1]) + fp[-1]
-    else:
-        return np.interp(x, xp, fp)
+    else:  # interpolate
+        return np.interp(x, xp, fp)  # type: ignore

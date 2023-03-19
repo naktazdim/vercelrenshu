@@ -2,14 +2,14 @@
     "version": 2,
     "builds": [
         {
-            "src": "/vercelrenshu/api.py",
+            "src": "/vercelrenshu/api/api.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/vercelrenshu/api.py"
+            "dest": "/vercelrenshu/api/api.py"
         }
     ],
     "regions": [

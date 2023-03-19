@@ -81,7 +81,7 @@ def _calculate_all_probabilities(lamps_df: pd.DataFrame, theta: float) -> pd.Dat
             on="bmsmd5",
             how="left",
         ).fillna(0, downcast="infer")
-        [["bmsmd5", "current_grade", "target_grade", "recommendo"]]
+        [["bmsmd5", "current_grade", "target_grade", "probability"]]
     )  # fmt: skip
 
 

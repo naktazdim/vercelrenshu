@@ -29,9 +29,15 @@ def estimate_lr2(request: RequestLR2) -> dict:
 
 
 def _estimate(lamps_df: pd.DataFrame) -> dict:
+    PRECISION = 6
     estimation = estimate(lamps_df)
+
+    hoshi = round(theta_to_hoshi(estimation.theta), PRECISION)
+    recommendation = estimation.recommendation.round({"probability": PRECISION})
+    reverse_recommendation = estimation.reverse_recommendation.round({"probability": PRECISION})
+
     return {
-        "hoshi": theta_to_hoshi(estimation.theta),
-        "recommendation": estimation.recommendation.to_dict(orient="records"),
-        "reverse_recommendation": estimation.reverse_recommendation.to_dict(orient="records"),
+        "hoshi": hoshi,
+        "recommendation": recommendation.to_dict(orient="records"),
+        "reverse_recommendation": reverse_recommendation.to_dict(orient="records"),
     }

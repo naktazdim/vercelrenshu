@@ -6,12 +6,12 @@ from importlib.resources import files
 
 import pandas as pd
 
-import vercelrenshu.api
+import vercelrenshu
 
 
 @cache
 def _load_db():
-    return pickle.load(files(vercelrenshu.api).joinpath("db.pickle").open("rb"))
+    return pickle.load(files(vercelrenshu).joinpath("db.pickle").open("rb"))
 
 
 def a_df() -> pd.DataFrame:

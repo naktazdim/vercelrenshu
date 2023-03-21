@@ -3,8 +3,8 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from vercelrenshu.resources import a_df, b_average_df, b_df
-from vercelrenshu.util.calc import expit, interp, minimize
+from vercelrenshu.calc import expit, interp, minimize
+from vercelrenshu.db import a_df, b_average_df, b_df
 
 
 @dataclass
@@ -15,6 +15,7 @@ class Estimation:
 
 
 def estimate(lamps_df: pd.DataFrame) -> Estimation:
+    # lamps_df: (bmsmd5, grade)
     theta = _estimate_theta(lamps_df)
     probabilities_df = _calculate_all_probabilities(lamps_df, theta)
     recommendation = _recommendation(probabilities_df, threshold=0.2)

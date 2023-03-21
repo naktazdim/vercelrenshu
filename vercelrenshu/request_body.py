@@ -3,8 +3,7 @@ from typing import Literal
 import pandas as pd
 from pydantic import BaseModel, conint, constr
 
-from vercelrenshu.resources import bms_meta_df
-from vercelrenshu.util.df import records_to_df
+from vercelrenshu.db import bms_meta_df
 
 
 class LampLR2(BaseModel):
@@ -27,10 +26,7 @@ class RequestMD5(BaseModel):
 
 
 def lr2_to_lamps_df(request: RequestLR2) -> pd.DataFrame:
-    lr2_df = records_to_df(
-        request.dict()["__root__"],
-        dtypes={"type": str, "lr2_id": int, "grade": int},
-    )
+    lr2_df = pd.DataFrame(request.dict()["__root__"]).astype({"type": str, "lr2_id": int, "grade": int})
     return pd.merge(
         lr2_df,
         bms_meta_df(),
@@ -40,7 +36,4 @@ def lr2_to_lamps_df(request: RequestLR2) -> pd.DataFrame:
 
 
 def md5_to_lamps_df(request: RequestMD5) -> pd.DataFrame:
-    return records_to_df(
-        request.dict()["__root__"],
-        dtypes={"bmsmd5": str, "grade": int},
-    )
+    return pd.DataFrame(request.dict()["__root__"]).astype({"bmsmd5": str, "grade": int})

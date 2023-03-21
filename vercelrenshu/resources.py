@@ -1,38 +1,30 @@
 from __future__ import annotations
 
-import bz2
-import json
-from dataclasses import dataclass
+import pickle
 from functools import cache
-from pathlib import Path
+from importlib.resources import files
 
 import pandas as pd
-from pandas.api.types import CategoricalDtype
 
-from vercelrenshu.util.df import records_to_df
-
-_RESOURCE_DIR = Path(__file__).parent.parent / "resources"
-
-BMSTypeCategory = CategoricalDtype(["bms", "course"])
-
-
-@dataclass
-class IRTParameters:
-    a_df: pd.DataFrame
-    b_df: pd.DataFrame
-    b_average_df: pd.DataFrame
+import vercelrenshu.api
 
 
 @cache
-def load_irt_parameters() -> IRTParameters:
-    d = json.load(bz2.open(_RESOURCE_DIR / "irt_parameters.json.bz2"))
-    a_df = records_to_df(d["a"], dtypes={"bmsmd5": str, "a": float})
-    b_df = records_to_df(d["b"], dtypes={"bmsmd5": str, "b": float, "grade": int})
-    b_average_df = records_to_df(d["b_average"], dtypes={"b": float, "hoshi": int})
-    return IRTParameters(a_df, b_df, b_average_df)
+def _load_db():
+    return pickle.load(files(vercelrenshu.api).joinpath("db.pickle").open("rb"))
 
 
-@cache
-def load_bms_meta() -> pd.DataFrame:
-    d = json.load(bz2.open(_RESOURCE_DIR / "bms_meta.json.bz2"))
-    return records_to_df(d, dtypes={"bmsmd5": str, "type": BMSTypeCategory, "lr2_id": int, "title": str})
+def a_df() -> pd.DataFrame:
+    return _load_db()["a"]
+
+
+def b_df() -> pd.DataFrame:
+    return _load_db()["b"]
+
+
+def b_average_df() -> pd.DataFrame:
+    return _load_db()["b_average"]
+
+
+def bms_meta_df() -> pd.DataFrame:
+    return _load_db()["bms_meta"]

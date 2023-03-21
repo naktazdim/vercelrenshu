@@ -1,9 +1,9 @@
-from typing import Literal, Union
+from typing import Literal
 
 import pandas as pd
 from pydantic import BaseModel, conint, constr
 
-from vercelrenshu.resources import BMSTypeCategory, load_bms_meta
+from vercelrenshu.resources import bms_meta_df
 from vercelrenshu.util.df import records_to_df
 
 
@@ -29,11 +29,11 @@ class RequestMD5(BaseModel):
 def lr2_to_lamps_df(request: RequestLR2) -> pd.DataFrame:
     lr2_df = records_to_df(
         request.dict()["__root__"],
-        dtypes={"type": BMSTypeCategory, "lr2_id": int, "grade": int},
+        dtypes={"type": str, "lr2_id": int, "grade": int},
     )
     return pd.merge(
         lr2_df,
-        load_bms_meta(),
+        bms_meta_df(),
         on=["type", "lr2_id"],
         how="inner",
     )[["bmsmd5", "grade"]]

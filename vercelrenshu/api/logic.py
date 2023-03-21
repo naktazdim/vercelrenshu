@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from vercelrenshu.resources import load_irt_parameters
+from vercelrenshu.resources import a_df, b_average_df, b_df
 from vercelrenshu.util.calc import expit, interp, minimize
 
 
@@ -23,8 +23,11 @@ def estimate(lamps_df: pd.DataFrame) -> Estimation:
 
 
 def theta_to_hoshi(theta: float) -> float:
-    b_average_df = load_irt_parameters().b_average_df
-    return interp(theta, b_average_df["b"].to_numpy(), b_average_df["hoshi"].to_numpy())
+    return interp(
+        theta,
+        b_average_df()["b"].to_numpy(),
+        b_average_df()["hoshi"].to_numpy(),
+    )
 
 
 # -------------------------------- #
@@ -33,7 +36,7 @@ def theta_to_hoshi(theta: float) -> float:
 def _a(bmsmd5: pd.Series) -> np.ndarray:
     return pd.merge(
         bmsmd5,
-        load_irt_parameters().a_df,
+        a_df(),
         on="bmsmd5",
         how="inner",
     )["a"].to_numpy()
@@ -42,7 +45,7 @@ def _a(bmsmd5: pd.Series) -> np.ndarray:
 def _b(bmsmd5: pd.Series, grade: pd.Series) -> np.ndarray:
     return pd.merge(
         pd.concat([bmsmd5, grade], axis=1),
-        load_irt_parameters().b_df,
+        b_df(),
         on=["bmsmd5", "grade"],
         how="inner",
     )["b"].to_numpy()
@@ -65,10 +68,11 @@ def _estimate_theta(lamps_df: pd.DataFrame) -> float:
 
 
 def _calculate_all_probabilities(lamps_df: pd.DataFrame, theta: float) -> pd.DataFrame:
-    a_df = load_irt_parameters().a_df
-    b_df = load_irt_parameters().b_df
-    b_df = b_df.query("2 <= grade & grade <= 5")
-    a_b_df = pd.merge(a_df, b_df, on="bmsmd5")
+    a_b_df = pd.merge(
+        a_df(),
+        b_df().query("2 <= grade & grade <= 5"),
+        on="bmsmd5",
+    )
     probabilities_df = (
         a_b_df
         .assign(probability=_prob(theta, a_b_df["a"], a_b_df["b"]))
